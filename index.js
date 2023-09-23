@@ -1,4 +1,5 @@
 import express from "express";
+import fs from "fs";
 import mongoose from "mongoose";
 import multer from "multer";
 import cors from "cors";
@@ -13,16 +14,12 @@ import { validAuth, handleValidationErrors } from "./utils/index.js";
 import { UserController, PostController } from "./controllers/index.js";
 
 // ---------------------------------------------------------------- Database connect ----------------------------------------------------------------
+const MONGODB_URL =
+  "mongodb+srv://admin:legend5432@cluster0.3amxre6.mongodb.net/blog?retryWrites=true&w=majority";
 mongoose
-  .connect(
-    "mongodb+srv://admin:legend5432@cluster0.3amxre6.mongodb.net/blog?retryWrites=true&w=majority"
-  )
-  .then(() => {
-    console.log("Connect DB");
-  })
-  .catch(() => {
-    console.log("Failed to connect");
-  });
+  .connect(MONGODB_URL)
+  .then(() => console.log("Connect DB"))
+  .catch(() => console.log("Failed to connect"));
 
 // ---------------------------------------------------------------- Express server ----------------------------------------------------------------
 const app = express();
@@ -31,6 +28,10 @@ const port = 4444;
 // ---------------------------------------------------------------- Storage for image - multer ----------------------------------------------------------------
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
+    if (!fs.existsSync("uploads")) {
+      fs.mkdirSync("uploads");
+    }
+
     cb(null, "uploads");
   },
   filename: (_, file, cb) => {

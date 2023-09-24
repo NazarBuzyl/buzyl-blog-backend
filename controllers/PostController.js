@@ -1,13 +1,22 @@
 import PostModel from "../models/Post.js";
 
+// ---------------------------------------------------------------- Tags action (Last Tags - One Tag) ----------------------------------------------------------------
 export const getLastTags = async (req, res) => {
   try {
-    const posts = await PostModel.find().limit(5).exec();
+    const posts = await PostModel.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .exec();
 
     const tags = posts
       .map((obj) => obj.tags)
       .flat()
-      .slice(0, 5);
+      .reduce((uniqueTags, tag) => {
+        if (uniqueTags.length < 5 && !uniqueTags.includes(tag)) {
+          uniqueTags.push(tag);
+        }
+        return uniqueTags;
+      }, []);
 
     res.json(tags);
   } catch (err) {
@@ -18,15 +27,51 @@ export const getLastTags = async (req, res) => {
   }
 };
 
+export const getPostsByTag = async (req, res) => {
+  try {
+    const tagId = req.params.id;
+    const posts = await PostModel.find({ tags: { $in: tagId } })
+      .populate("user")
+      .exec();
+
+    res.json(posts);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Error one tag",
+    });
+  }
+};
+
+// ---------------------------------------------------------------- Get posts (All - One - Popularity)  ----------------------------------------------------------------
 export const getAll = async (req, res) => {
   try {
-    const posts = await PostModel.find().populate("user").exec();
+    const posts = await PostModel.find()
+      .sort({ createdAt: -1 })
+      .populate("user")
+      .exec();
 
     res.json(posts);
   } catch (err) {
     console.log(err);
     res.status(500).json({
       message: "Error with posts",
+    });
+  }
+};
+
+export const getPopularity = async (req, res) => {
+  try {
+    const posts = await PostModel.find()
+      .sort({ viewsCount: -1 })
+      .populate("user")
+      .exec();
+
+    res.json(posts);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Error with posts - popularity",
     });
   }
 };
@@ -60,6 +105,7 @@ export const getOne = async (req, res) => {
   }
 };
 
+// ---------------------------------------------------------------- Action with posts ----------------------------------------------------------------
 export const remove = async (req, res) => {
   try {
     const postId = req.params.id;

@@ -74,12 +74,14 @@ app.post("/upload", validAuth, upload.single("image"), (req, res) => {
 
 // ---------------------------------------------------------------- Post action ----------------------------------------------------------------
 app.get("/posts", PostController.getAll);
+app.get("/posts/popularity", PostController.getPopularity);
 app.get("/posts/:id", PostController.getOne);
 app.post("/posts", validAuth, postCreateValidation, PostController.create);
 app.delete("/posts/:id", validAuth, PostController.remove);
 app.patch("/posts/:id", validAuth, postCreateValidation, PostController.update);
 
 app.get("/tags", PostController.getLastTags);
+app.get("/tags/:id", PostController.getPostsByTag);
 
 // ---------------------------------------------------------------- Server result ----------------------------------------------------------------
 app.listen(port, (err) => {

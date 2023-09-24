@@ -15,9 +15,12 @@ import { UserController, PostController } from "./controllers/index.js";
 
 // ---------------------------------------------------------------- Database connect ----------------------------------------------------------------
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(
+    process.env.MONGODB_URI ||
+      "mongodb+srv://admin:legend5432@cluster0.3amxre6.mongodb.net/?retryWrites=true&w=majority"
+  )
   .then(() => console.log("Connect DB"))
-  .catch(() => console.log("Failed to connect"));
+  .catch((err) => console.log("Failed to connect", err));
 
 // ---------------------------------------------------------------- Express server ----------------------------------------------------------------
 const app = express();

@@ -14,10 +14,8 @@ import { validAuth, handleValidationErrors } from "./utils/index.js";
 import { UserController, PostController } from "./controllers/index.js";
 
 // ---------------------------------------------------------------- Database connect ----------------------------------------------------------------
-const MONGODB_URL =
-  "mongodb+srv://admin:legend5432@cluster0.3amxre6.mongodb.net/blog?retryWrites=true&w=majority";
 mongoose
-  .connect(MONGODB_URL)
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connect DB"))
   .catch(() => console.log("Failed to connect"));
 
@@ -84,7 +82,7 @@ app.get("/tags", PostController.getLastTags);
 app.get("/tags/:id", PostController.getPostsByTag);
 
 // ---------------------------------------------------------------- Server result ----------------------------------------------------------------
-app.listen(port, (err) => {
+app.listen(process.env.PORT || port, (err) => {
   if (err) {
     return console.error(err);
   }

@@ -21,7 +21,6 @@ mongoose
 
 // ---------------------------------------------------------------- Express server ----------------------------------------------------------------
 const app = express();
-const port = 4444;
 
 // ---------------------------------------------------------------- Storage for image - multer ----------------------------------------------------------------
 const storage = multer.diskStorage({
@@ -82,9 +81,9 @@ app.get("/tags", PostController.getLastTags);
 app.get("/tags/:id", PostController.getPostsByTag);
 
 // ---------------------------------------------------------------- Server result ----------------------------------------------------------------
-app.listen(process.env.PORT || port, (err) => {
+app.listen(process.env.PORT || 4444, (err) => {
   if (err) {
     return console.error(err);
   }
-  console.log(`Server:${port} OK`);
+  console.log(`Server: 4444 OK`);
 });

@@ -91,6 +91,18 @@ export const getOne = async (req, res) => {
         returnDocument: "after",
       }
     ).populate("user");
+    // const doc = await PostModel.findById(postId);
+    // const decodedUser = await authMiddleware.decodeToken(req);
+
+    // if (doc.user.toString() !== decodedUser._id.toString()) {
+    //   await PostModel.findByIdAndUpdate(
+    //     {
+    //       _id: postId,
+    //     },
+    //     { $inc: { viewsCount: 1 } },
+    //     { returnDocument: "after" }
+    //   ).populate("user");
+    // }
 
     if (!doc) {
       return res.status(404).json({ message: "Post didn`t found" });
@@ -132,7 +144,10 @@ export const create = async (req, res) => {
     const doc = new PostModel({
       title: req.body.title,
       text: req.body.text,
-      tags: req.body.tags.split(","),
+      tags: req.body.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ""),
       imageUrl: req.body.imageUrl,
       user: req.userId,
     });
@@ -157,7 +172,10 @@ export const update = async (req, res) => {
       {
         title: req.body.title,
         text: req.body.text,
-        tags: req.body.tags.split(","),
+        tags: req.body.tags
+          .split(/[,#.&]+/)
+          .map((tag) => tag.trim())
+          .filter((tag) => tag !== ""),
         imageUrl: req.body.imageUrl,
         user: req.userId,
       }

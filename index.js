@@ -16,7 +16,10 @@ import { UserController, PostController } from "./controllers/index.js";
 const mongoURI = process.env.MONGODB_URI;
 
 mongoose
-  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(
+    "mongodb+srv://admin:legend5432@cluster0.3amxre6.mongodb.net/blog?retryWrites=true&w=majority",
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -63,8 +66,14 @@ app.post(
 );
 app.get("/auth/me", validAuth, UserController.getMe);
 
+app.post("/upload/avatar", upload.single("image"), (req, res) => {
+  res.json({
+    url: `/uploads/${req.file.originalname}`,
+  });
+});
+
 // ---------------------------------------------------------------- Upload image ----------------------------------------------------------------
-app.post("/upload", validAuth, upload.single("image"), (req, res) => {
+app.post("/upload/post_img", validAuth, upload.single("image"), (req, res) => {
   res.json({
     url: `/uploads/${req.file.originalname}`,
   });

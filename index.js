@@ -12,15 +12,13 @@ import {
 
 import { validAuth, handleValidationErrors } from "./utils/index.js";
 import { UserController, PostController } from "./controllers/index.js";
-
 // ---------------------------------------------------------------- Database connect ----------------------------------------------------------------
+const mongoURI = process.env.MONGODB_URI;
+
 mongoose
-  .connect(
-    process.env.MONGODB_URI ||
-      "mongodb+srv://admin:legend5432@cluster0.3amxre6.mongodb.net/?retryWrites=true&w=majority"
-  )
-  .then(() => console.log("Connect DB"))
-  .catch((err) => console.log("Failed to connect", err));
+  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // ---------------------------------------------------------------- Express server ----------------------------------------------------------------
 const app = express();
@@ -88,5 +86,5 @@ app.listen(process.env.PORT || 4444, (err) => {
   if (err) {
     return console.error(err);
   }
-  console.log(`Server: 4444 OK`);
+  console.log(`Server: 4444 OK`, process.env.PORT);
 });

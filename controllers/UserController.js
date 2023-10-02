@@ -88,3 +88,24 @@ export const getMe = async (req, res) => {
     res.status(500).json({ message: "No access" });
   }
 };
+
+export const updateMe = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    await UserModel.updateOne(
+      { _id: userId },
+      {
+        fullName: req.body.fullName,
+        avatarURL: req.body.avatarURL,
+      }
+    );
+
+    res.json({ message: "success" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Error with update user",
+    });
+  }
+};

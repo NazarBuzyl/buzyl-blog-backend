@@ -65,6 +65,7 @@ app.post(
   UserController.register
 );
 app.get("/auth/me", validAuth, UserController.getMe);
+app.patch("/auth/update_me", validAuth, UserController.updateMe);
 
 app.post("/upload/avatar", upload.single("image"), (req, res) => {
   res.json({

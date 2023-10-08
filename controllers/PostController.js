@@ -43,7 +43,8 @@ export const getPostsByTag = async (req, res) => {
   }
 };
 
-// ---------------------------------------------------------------- Get posts (All - One - Popularity)  ----------------------------------------------------------------
+// ---------------------------------------------------------------- Get posts by (All - Popularity - User - One )  ----------------------------------------------------------------
+
 export const getAll = async (req, res) => {
   try {
     const posts = await PostModel.find()
@@ -72,6 +73,23 @@ export const getPopularity = async (req, res) => {
     console.log(err);
     res.status(500).json({
       message: "Error with posts - popularity",
+    });
+  }
+};
+
+export const getByUser = async (req, res) => {
+  try {
+    const userID = req.params.id;
+    const posts = await PostModel.find({ user: userID })
+      .sort({ createeAt: -1 })
+      .populate("user")
+      .exec();
+
+    res.json(posts);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Error with users posts",
     });
   }
 };
@@ -186,6 +204,36 @@ export const update = async (req, res) => {
     console.log(err);
     res.status(500).json({
       message: "Error with update",
+    });
+  }
+};
+
+export const addComment = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const { text, user } = req.body;
+    const newComment = {
+      text,
+      user: {
+        fullName: user.fullName,
+        avatarURL: user.avatarURL,
+        _id: user._id,
+      },
+    };
+
+    const doc = await PostModel.findByIdAndUpdate(
+      { _id: postId },
+      {
+        $push: { comments: newComment },
+      },
+      { new: true }
+    );
+
+    res.json(doc);
+  } catch (err) {
+    console.log(err, res, req);
+    res.status(500).json({
+      message: "Error with publish comment",
     });
   }
 };
